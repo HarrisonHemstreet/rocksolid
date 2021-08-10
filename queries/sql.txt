@@ -1,0 +1,11 @@
+-- select * from customer;
+-- select * from xpsrems.payments where invoicenumber = "12300047LA05";
+-- select id from xpsrems.payments where invoicenumber = "12300047LA05";
+-- select * from xpsrems.invoice where number = "12300047LA05";
+-- select * from xpsrems.invoice;
+
+SELECT p.id, i.number as invoicenumber, i.customerid, p.amount, p.date, p.moddate, p.checknum, p.bank, p.note, p.iscredit,
+                IF(((SELECT freezedate FROM invoice_freeze WHERE invoicenumber = i.number AND unfrozen = 0 ORDER BY id DESC LIMIT 1) > p.moddate OR i.freezedate IS NULL) AND adjustmentid IS NOT NULL, '*', '') AS preFreezeAdjustment
+                FROM xpsrems.invoice i
+                JOIN payments p ON p.invoicenumber = i.number and p.iscredit=0 and p.id;
+                -- WHERE invoicenumber = "12300047LA05";
